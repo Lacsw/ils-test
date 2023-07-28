@@ -1,0 +1,12 @@
+.routes {
+  margin: 30px;
+
+  &__table {
+    background-color: azure;
+  }
+
+  &__span {
+    display: flex;
+    font-weight: bold;
+  }
+}
