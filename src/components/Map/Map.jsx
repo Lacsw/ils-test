@@ -1,22 +1,15 @@
 import React from 'react';
-
-import L from 'leaflet';
-import { MapContainer, Marker, TileLayer } from 'react-leaflet';
-import iconMarker from 'leaflet/dist/images/marker-icon.png';
-import iconRetina from 'leaflet/dist/images/marker-icon-2x.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
-import './Map.scss';
+import { useSelector } from 'react-redux';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
-const icon = L.icon({
-  iconRetinaUrl: iconRetina,
-  iconUrl: iconMarker,
-  shadowUrl: iconShadow,
-});
+import './Map.scss';
+import markerIcon from '../../utils/markerIcon';
+import RouteLine from '../RouteLine/RouteLine';
 
 export default function Map() {
-  const position = [51.505, -0.09];
+  const selectedRoute = useSelector((state) => state.routes.selectedRoute);
+  const marks = useSelector((state) => state.routes.marks);
 
   return (
     <div className='map'>
@@ -25,13 +18,30 @@ export default function Map() {
         <MapContainer
           className='map__container'
           center={[59.9313, 30.3941]}
-          zoom={13}
+          zoom={11}
           scrollWheelZoom={true}>
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
           />
-          <Marker position={position} icon={icon} />
+
+          {selectedRoute &&
+            selectedRoute.positions.map((position, id) => (
+              <Marker
+                key={id}
+                position={position}
+                icon={markerIcon}
+                eventHandlers={{
+                  mouseover: (event) => event.target.openPopup(),
+                  mouseout: (event) => event.target.closePopup(),
+                }}>
+                <Popup>
+                  <h3>{`Точка ${id + 1}`}</h3>
+                </Popup>
+              </Marker>
+            ))}
+
+          <RouteLine route={marks} />
         </MapContainer>
       </div>
     </div>

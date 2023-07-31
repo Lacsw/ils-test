@@ -1,20 +1,20 @@
+import { useDispatch, useSelector } from 'react-redux';
 import { Table } from 'antd';
 
 import './Routes.scss';
-import { routes } from '../../data';
 import { columnsRoutes } from '../../utils/constants';
-
-const rowSelection = {
-  onChange: (routeKey, routePositions) => {
-    console.log(
-      `route ID: ${routeKey}`,
-      'route Marks: ',
-      routePositions[0].positions
-    );
-  },
-};
+import { selectRoute } from '../../reducers/routesSlice';
 
 export default function Routes({ title }) {
+  const routes = useSelector((state) => state.routes.routes);
+  const dispatch = useDispatch();
+
+  const rowSelection = {
+    onChange: (routeKey, routePositions) => {
+      dispatch(selectRoute({ route: routePositions[0] }));
+    },
+  };
+
   return (
     <section className='routes'>
       <h2>{title}</h2>
